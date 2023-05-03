@@ -5,6 +5,7 @@ import com.example.visualbudget.model.Cost;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,40 +39,46 @@ public class CostController {
     }
 
     @GetMapping("/fetchCost/{ID}")
-    public Cost getCostByID(@PathVariable("ID") int costID) {
+    public ResponseEntity<Cost> getCostByID(@PathVariable("ID") int costID) {
         try {
-            return costDAO.getCost(costID);
+            Cost cost = costDAO.getCost(costID);
+            return new ResponseEntity<>(cost, HttpStatus.OK);
         } catch (ChangeSetPersister.NotFoundException e) {
             System.out.println("ERROR fetching cost: " + e.getMessage());
-            return null;
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
     @GetMapping("/fetchAllCosts/{ID}")
-    public List<Cost> getAllCostsForUser(@PathVariable("ID") int userID) {
+    public ResponseEntity<List<Cost>> getAllCostsForUser(@PathVariable("ID") int userID) {
         try {
-            return costDAO.getAllCostsForUser(userID);
+            List<Cost> costList = costDAO.getAllCostsForUser(userID);
+            return new ResponseEntity<>(costList, HttpStatus.OK);
         } catch (ChangeSetPersister.NotFoundException e) {
             System.out.println("ERROR fetching costs for user; " + e.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return null;
     }
 
     @PutMapping("/updateCostInfo")
-    public void updateCostInfo(@RequestBody Cost cost) {
+    public ResponseEntity<Void> updateCostInfo(@RequestBody Cost cost) {
         try {
             costDAO.updateCostInfo(cost);
+            return new ResponseEntity<>(HttpStatus.ACCEPTED);
         } catch (Exception e) {
             System.out.println("ERROR updating cost: " + e.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
     @DeleteMapping("/deleteCost/{ID}")
-    public void deleteCost(@PathVariable("ID") int costID) {
+    public ResponseEntity<Void> deleteCost(@PathVariable("ID") int costID) {
         try {
             costDAO.deleteCost(costID);
+            return new ResponseEntity<>(HttpStatus.ACCEPTED);
         } catch (Exception e) {
             System.out.println("ERROR deleting cost: " + e.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 }

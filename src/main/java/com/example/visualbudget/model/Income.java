@@ -13,12 +13,16 @@ import java.time.DayOfWeek;
 @Data
 public class Income {
 
-    @JsonProperty("id")
-    int ID;
+    @JsonProperty("income_id")
+    int incomeID;
     String company;
     BigDecimal amount;
     String type;
+    @JsonProperty("pay_day")
     DayOfWeek payDay;
+    @JsonProperty("pay_frequency")
     int payFrequency;
+    @JsonProperty("user_id")
+    int userID;
 
 }

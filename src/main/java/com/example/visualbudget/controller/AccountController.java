@@ -4,6 +4,7 @@ import com.example.visualbudget.dao.AccountDAO;
 import com.example.visualbudget.model.Account;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,40 +37,46 @@ public class AccountController {
     }
 
     @GetMapping("/myAccount/{ID}")
-    public Account getAccountByID(@PathVariable("ID") int accountID) {
+    public ResponseEntity<Account> getAccountByID(@PathVariable("ID") int accountID) {
         try {
-            return accountDAO.getAccount(accountID);
+            Account account = accountDAO.getAccount(accountID);
+            return new ResponseEntity<>(account, HttpStatus.OK);
         } catch (Exception e) {
-            System.out.println("ERROR retrieving account " + e.getMessage() );
-            return null;
+            System.out.println("ERROR retrieving account " + e.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
     @GetMapping("/allAccounts/{ID}")
-    public List<Account> getAllAccountsForUser(@PathVariable("ID") int userID) {
+    public ResponseEntity<List<Account>> getAllAccountsForUser(@PathVariable("ID") int userID) {
         try {
-            return accountDAO.getAllAccountsForUser(userID);
+            List<Account> accountList = accountDAO.getAllAccountsForUser(userID);
+            return  new ResponseEntity<>(accountList, HttpStatus.OK);
         } catch (Exception e) {
             System.out.println("ERROR retrieving user Accounts: " + e.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return null;
     }
 
     @PutMapping("/updateAccount")
-    public void updateAccountInfo(@RequestBody Account account) {
+    public ResponseEntity<Void> updateAccountInfo(@RequestBody Account account) {
         try {
             accountDAO.updateAccountInfo(account);
+            return new ResponseEntity<>(HttpStatus.ACCEPTED);
         } catch (Exception e) {
             System.out.println("ERROR updating account " + e.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
     @DeleteMapping("/deleteAccount/{ID}")
-    public void deleteAccount(@PathVariable("ID") int accountID) {
+    public ResponseEntity<Void> deleteAccount(@PathVariable("ID") int accountID) {
         try {
             accountDAO.deleteAccount(accountID);
+            return new ResponseEntity<>(HttpStatus.ACCEPTED);
         } catch (Exception e) {
             System.out.println("ERROR Deleting account: " + e.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 }
