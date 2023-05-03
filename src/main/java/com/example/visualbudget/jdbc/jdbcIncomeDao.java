@@ -26,7 +26,7 @@ public class jdbcIncomeDao implements IncomeDAO {
     public boolean createIncome(Income income) {
         String sql = "INSERT INTO income (company, amount, type, pay_day, pay_frequency,user_id) VALUES (?, ?, ?, ?, ?, ?)";
         try {
-            jdbcTemplate.update(sql, income.getCompany(), income.getAmount(), income.getType(), income.getPayDay(), income.getPayFrequency(), income.getUserID());
+            jdbcTemplate.update(sql, income.getCompany(), income.getAmount(), income.getType(), String.valueOf(income.getPayDay()), income.getPayFrequency(), income.getUserID());
         } catch (Exception e) {
             System.out.println("ERROR creating income: " + e.getMessage());
             return false;
@@ -79,7 +79,10 @@ public class jdbcIncomeDao implements IncomeDAO {
         income.setCompany(result.getString("company"));
         income.setType(result.getString("type"));
         income.setAmount(result.getBigDecimal("amount"));
-        income.setPayDay(DayOfWeek.valueOf(result.getString("pay_day")));
+        String payDay = result.getString("pay_day");
+        if(payDay != null && !payDay.equals("null")) {
+            income.setPayDay(DayOfWeek.valueOf(payDay));
+        }
         income.setPayFrequency(result.getInt("pay_frequency"));
         income.setUserID(result.getInt("user_id"));
 

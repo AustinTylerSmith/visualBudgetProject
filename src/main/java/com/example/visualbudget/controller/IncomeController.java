@@ -12,8 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
-@CrossOrigin(origins = "http://localhost:4200") // replace with actual client url
+@CrossOrigin
 public class IncomeController {
 
     private IncomeDAO incomeDAO;
@@ -49,7 +48,7 @@ public class IncomeController {
         }
     }
 
-    @GetMapping("/income/user/{userID}")
+    @GetMapping("/allIncomeStreams/{userID}")
     public ResponseEntity<List<Income>> getAllIncomeStreamsForUser(@PathVariable("userID") int userID) {
         try {
             List<Income> incomeList = incomeDAO.getAllIncomeStreamsForUser(userID);
@@ -71,7 +70,7 @@ public class IncomeController {
         }
     }
 
-    @DeleteMapping("/income/{incomeID}")
+    @DeleteMapping("/deleteIncome/{incomeID}")
     public ResponseEntity<Void> deleteIncome(@PathVariable("incomeID") int incomeID) {
         try {
             incomeDAO.deleteIncome(incomeID);
